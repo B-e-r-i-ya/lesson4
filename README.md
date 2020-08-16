@@ -1,7 +1,8 @@
 # lesson4
 
 Создаем Vagrantfile:
-'''
+
+```
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -26,4 +27,22 @@ Vagrant.configure(2) do |config|
   end
 
 end
-'''
+```
+И Два скрипта `nfss_script.sh` и `nfsc_script.sh`
+
+`nfss_script.sh`:
+```
+yum -y install nfs-utils      #устанавливаем
+systemctl enable firewalld --now
+firewall-cmd --permanent --zone=public --add-service=nfs                      #настраиваем файрволл
+firewall-cmd --permanent --zone=public --add-service=mountd
+firewall-cmd --permanent --zone=public --add-service=rpc-bind
+firewall-cmd --reload
+mkdir /mnt/storage                                                          #создаем директорию
+chown -R nfsnobody:nfsnobody /mnt/storage                                   
+chmod -R 777 /mnt/storage
+echo '/mnt/storage           192.168.50.11(rw,sync,no_root_squash,no_subtree_check)' >> /etc/exports #настраиваем шару
+systemctl enable rpcbind nfs-server --now           # запускаем службу
+```
+
+
