@@ -44,5 +44,20 @@ chmod -R 777 /mnt/storage
 echo '/mnt/storage           192.168.50.11(rw,sync,no_root_squash,no_subtree_check)' >> /etc/exports #настраиваем шару
 systemctl enable rpcbind nfs-server --now           # запускаем службу
 ```
+`nfsc_script.sh`:
+
+```
+yum -y install nfs-utils
+systemctl enable rpcbind --now
+mkdir /mnt/nfs-share
+echo '192.168.50.10:/mnt/storage  /mnt/nfs-share     nfs    defaults    0 0'>> /etc/fstab
+mount -a
+touch /mnt/nfs-share/test
+```
+
+Запускаем `vagrant up`
+Подключаемся к серверу `vagrant ssh nfss`
+Проверяем тестовый файл созданый на клиенской машине `ls /mnt/storage`
+
 
 
